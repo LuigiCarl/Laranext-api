@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\books;
+use App\Models\book;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\bookResource;
@@ -12,18 +12,18 @@ class bookController extends Controller
 {
     public function index()
     {
-        $books = books::get();
+        $book = book::get();
 
-        if ($books->count() > 0) {
-            return bookResource::collection($books);
+        if ($book->count() > 0) {
+            return bookResource::collection($book);
         } else {
-            return response()->json(['message' => 'No books found'], 200);
+            return response()->json(['message' => 'No book found'], 200);
         }
     }
 
     public function show($id)
     {
-        $book = books::findOrFail($id);
+        $book = book::findOrFail($id);
         return new bookResource($book);
     }
 
@@ -33,7 +33,7 @@ class bookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'published_year' => 'required|integer|min:1900|max:' . date('Y'),
-            'isbn' => 'required|integer|unique:books,isbn',
+            'isbn' => 'required|integer|unique:book,isbn',
             'category' => 'required|string|max:255',
             'copies' => 'required|integer|min:1',
             'description' => 'nullable|string',
@@ -44,7 +44,7 @@ class bookController extends Controller
             return response()->json(['message' => 'Validation failed', 'errors' => $validator->messages()], 422);
         }
 
-        $book = books::create([
+        $book = book::create([
             'title' => $request->title,
             'author' => $request->author,
             'published_year' => $request->published_year,
@@ -58,13 +58,13 @@ class bookController extends Controller
         return response()->json(['message' => 'Book created successfully', 'data' => new bookResource($book)], 200);
     }
 
-    public function update(Request $request, books $book)
+    public function update(Request $request, book $book)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'published_year' => 'required|integer|min:1900|max:' . date('Y'),
-            'isbn' => 'required|integer|unique:books,isbn,' . $book->id,
+            'isbn' => 'required|integer|unique:book,isbn,' . $book->id,
             'category' => 'required|string|max:255',
             'copies' => 'required|integer|min:1',
             'description' => 'nullable|string',
@@ -91,7 +91,7 @@ class bookController extends Controller
 
     public function destroy($id)
     {
-        $book = books::find($id);
+        $book = book::find($id);
         if (!$book) {
             return response()->json(['message' => 'Book not found'], 404);
         }
