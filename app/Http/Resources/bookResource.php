@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class bookResource extends JsonResource
+class BookResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,17 +14,20 @@ class bookResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
         return [
             'id' => $this->id,
             'title' => $this->title,
             'author' => $this->author,
-            'published_year' => $this->published_year,
             'isbn' => $this->isbn,
             'category' => $this->category,
+            'published_year' => $this->published_year,
             'copies' => $this->copies,
+            'available_copies' => $this->available_copies,
             'description' => $this->description,
-            'cover_image_url' => $this->getCoverImageUrlAttribute(),
+            'cover_image' => $this->cover_image ? url($this->cover_image) : null,
+            'status' => $this->available_copies > 0 ? 'Available' : 'Borrowed',
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
